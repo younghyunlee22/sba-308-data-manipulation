@@ -1,3 +1,37 @@
+/**
+ * pseudocode
+ * Check if AssignmentGroup's course_id matches with the CourseInfo's id.
+(AssignmentGroup.course_id, CourseInfo.id)
+If false, it doesn't make sense to proceed. Throw an error. 
+
+Iterate through the LearnerSubmissions array of objects.
+For each learner, check what assignment(s) he/she/they submitted.
+If the assignment_id of the submission doesn't exist in AssignmentGroup's assignments array of objects, throw an error.
+I can identify each learner by learner_id key. 
+I can identify each assignment by assignment_id key. 
+
+Calculate the weighted score of each assignment.
+score / points_possible (division)
+score: LearnerSubmissions array, access the object by submission key, access the object by score key
+points_possible: AssignmentGroup object, access the array by assignments key, access the object by iterating through the array, access the value by points_possible key 
+If points_possible is 0, the calculation wouldn't work. 
+If a value I am expecting to be a number is a string, convert it to a number. 
+
+Calculate A. the sum of score earned. 
+Calculate B. the sum of points_possible. 
+Calculate the weighted average: A divided by B 
+
+If an assignment is not yet due, skip that assignment when calculating score and average. 
+I can identify due date by accessing AssignmentGroup objects at assignments key and from there 
+iterate through the array that is the value of AssignmentGroup[assignments] to find out due date of the submitted assignment
+
+If the learner’s submission is late (submitted_at is past due_at), deduct 10 percent of the total points possible from their score for that assignment.
+
+Push each learner's data as an object into the result array. 
+
+Return the result array.
+ */
+
 // The provided course information.
 const CourseInfo = {
   id: 451,
