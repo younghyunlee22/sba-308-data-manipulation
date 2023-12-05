@@ -49,7 +49,7 @@ const AssignmentGroup = {
       id: 1,
       name: "Declare a Variable",
       due_at: "2023-01-25",
-      points_possible: 0, //50
+      points_possible: 50,
     },
     {
       id: 2,
@@ -123,25 +123,26 @@ function isValidCourse(courseInfo, assignmentGroup) {
     console.log(err);
   }
 }
-
 function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
   try {
     isValidCourse(courseInfo, assignmentGroup);
 
     const result = [];
+
     // Iterate through LearnerSubmissions array of objects
+
     for (const submission of learnerSubmissions) {
       const learnerId = submission.learner_id;
       const assignmentId = submission.assignment_id;
 
-      // Find the corresponding assignment in AssignmentGroup
       const assignment = assignmentGroup.assignments.find(
         (a) => a.id === assignmentId
       );
 
+      // Now 'assignment' contains the assignment with the specified 'assignmentId'
       // console.log(assignment);
 
-      // If not found, log it and skip.
+      // If assignment not found, log it and skip.
       if (!assignment) {
         console.log(
           `No assignment with ID ${assignmentId} found in AssignmentGroup. Skipping.`
@@ -164,18 +165,60 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
         continue;
       }
 
-      // if submission is late, deduct 10%
-      const isLate = new Date(submitted_at) > dueDate;
-      const lateSubmissionDeduction = isLate
-        ? 0.1 * assignment.points_possible
-        : 0;
+      const possiblePoints = assignment.points_possible;
 
+      // if submission is late, deduct 10%
+      const isLate = new Date(submitted_at) > dueDate; // boolean
+      const lateSubmissionDeduction = isLate ? 0.1 * possiblePoints : 0;
+
+      const finalScore = score - lateSubmissionDeduction;
       // Calculate the weighted score
-      const weightedScore =
-        assignment.points_possible > 0
-          ? (score - lateSubmissionDeduction) / assignment.points_possible
-          : console.error("Possible points must be greater than 0");
+      let weightedScore = 0;
+
+      if (possiblePoints > 0) {
+        weightedScore = finalScore / possiblePoints;
+      } else {
+        throw new Error("Possible points must be greater than 0");
+      }
+      // Initialize learner object if not exists
+      if (!result.find((learner) => learner.id === learnerId)) {
+        result.push({
+          id: learnerId,
+          avg: 0,
+        });
+      }
+
+      // Update learner data
+      const learnerData = result.find((learner) => learner.id === learnerId);
+      learnerData[assignmentId] = weightedScore;
+
+      // Calculate final averages as you go
+      const numAssignments = Object.keys(learnerData).length - 2; // Subtracting 'id' and 'avg'
+      let totalFinalScore = 0;
+      let totalPointsPossible = 0;
+
+      // Iterate through each assignment in learnerData
+      for (const assignmentId in learnerData) {
+        if (assignmentId !== "id" && assignmentId !== "avg") {
+          const score = learnerData[assignmentId];
+
+          // Find the corresponding assignment in AssignmentGroup
+          const assignment = assignmentGroup.assignments.find(
+            (a) => a.id === parseInt(assignmentId)
+          );
+
+          if (assignment) {
+            totalFinalScore += score * assignment.points_possible;
+            totalPointsPossible += assignment.points_possible;
+          }
+        }
+      }
+
+      // Update the average based on the sum of actual final scores and sum of points_possible
+      learnerData.avg =
+        totalPointsPossible > 0 ? totalFinalScore / totalPointsPossible : 0;
     }
+
     return result;
   } catch (err) {
     console.log(err);
