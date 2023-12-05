@@ -70,7 +70,7 @@ const AssignmentGroup = {
 const LearnerSubmissions = [
   {
     learner_id: 125,
-    assignment_id: 5,
+    assignment_id: 1,
     submission: {
       submitted_at: "2023-01-25",
       score: 47,
@@ -139,7 +139,7 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
         (a) => a.id === assignmentId
       );
 
-      console.log(assignment);
+      // console.log(assignment);
 
       // If not found, log it and skip.
       if (!assignment) {
@@ -148,8 +148,22 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
         );
         continue;
       }
-    }
 
+      // destructuring submitted_at and score
+      const { submitted_at, score } = submission.submission;
+
+      // date comparison
+      const dueDate = new Date(assignment.due_at);
+
+      // Check if assignment is not yet due
+      // if dueDate is greater than current date created by new Date()
+      if (dueDate > new Date()) {
+        console.log(
+          `Assignment with ID ${assignmentId} is not yet due. Skipping.`
+        );
+        continue;
+      }
+    }
     return result;
   } catch (err) {
     console.log(err);
