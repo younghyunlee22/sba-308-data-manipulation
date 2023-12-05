@@ -49,7 +49,7 @@ const AssignmentGroup = {
       id: 1,
       name: "Declare a Variable",
       due_at: "2023-01-25",
-      points_possible: 50,
+      points_possible: 0, //50
     },
     {
       id: 2,
@@ -163,6 +163,18 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
         );
         continue;
       }
+
+      // if submission is late, deduct 10%
+      const isLate = new Date(submitted_at) > dueDate;
+      const lateSubmissionDeduction = isLate
+        ? 0.1 * assignment.points_possible
+        : 0;
+
+      // Calculate the weighted score
+      const weightedScore =
+        assignment.points_possible > 0
+          ? (score - lateSubmissionDeduction) / assignment.points_possible
+          : console.error("Possible points must be greater than 0");
     }
     return result;
   } catch (err) {
