@@ -34,7 +34,7 @@ Return the result array.
 
 // The provided course information.
 const CourseInfo = {
-  id: 451,
+  id: 45,
   name: "Introduction to JavaScript",
 };
 
@@ -110,7 +110,13 @@ const LearnerSubmissions = [
   },
 ];
 
-// =======================
+function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
+  isValidCourse(courseInfo, assignmentGroup);
+  console.log("Testing. Did it throw an error?");
+}
+
+const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
+console.log(result);
 
 /*
 expected result is like the following:
