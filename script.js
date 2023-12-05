@@ -112,20 +112,13 @@ const LearnerSubmissions = [
 
 // =======================
 
-function isValidCourse(courseInfo, assignmentGroup) {
+function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
   try {
     if (assignmentGroup.course_id !== courseInfo.id) {
       throw new Error(
         "Invalid input: The assignment group you entered is not part of the course you indicated."
       );
     }
-  } catch (err) {
-    console.log(err);
-  }
-}
-function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
-  try {
-    isValidCourse(courseInfo, assignmentGroup);
 
     const result = [];
 
@@ -180,6 +173,7 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
       } else {
         throw new Error("Possible points must be greater than 0");
       }
+
       // Initialize learner object if not exists
       if (!result.find((learner) => learner.id === learnerId)) {
         result.push({
