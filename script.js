@@ -2,11 +2,11 @@
  * pseudocode
  * Check if AssignmentGroup's course_id matches with the CourseInfo's id.
 (AssignmentGroup.course_id, CourseInfo.id)
-If false, it doesn't make sense to proceed. Throw an error. 
+If false, throw an error. 
 
 Iterate through the LearnerSubmissions array of objects.
 For each learner, check what assignment(s) he/she/they submitted.
-If the assignment_id of the submission doesn't exist in AssignmentGroup's assignments array of objects, throw an error.
+If the assignment_id of the submission doesn't exist in AssignmentGroup's assignments array of objects, log it and skip. 
 I can identify each learner by learner_id key. 
 I can identify each assignment by assignment_id key. 
 
@@ -34,7 +34,7 @@ Return the result array.
 
 // The provided course information.
 const CourseInfo = {
-  id: 45,
+  id: 451,
   name: "Introduction to JavaScript",
 };
 
@@ -70,7 +70,7 @@ const AssignmentGroup = {
 const LearnerSubmissions = [
   {
     learner_id: 125,
-    assignment_id: 1,
+    assignment_id: 5,
     submission: {
       submitted_at: "2023-01-25",
       score: 47,
@@ -110,9 +110,50 @@ const LearnerSubmissions = [
   },
 ];
 
+// =======================
+
+function isValidCourse(courseInfo, assignmentGroup) {
+  try {
+    if (assignmentGroup.course_id !== courseInfo.id) {
+      throw new Error(
+        "Invalid input: The assignment group you entered is not part of the course you indicated."
+      );
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
-  isValidCourse(courseInfo, assignmentGroup);
-  console.log("Testing. Did it throw an error?");
+  try {
+    isValidCourse(courseInfo, assignmentGroup);
+
+    const result = [];
+    // Iterate through LearnerSubmissions array of objects
+    for (const submission of learnerSubmissions) {
+      const learnerId = submission.learner_id;
+      const assignmentId = submission.assignment_id;
+
+      // Find the corresponding assignment in AssignmentGroup
+      const assignment = assignmentGroup.assignments.find(
+        (a) => a.id === assignmentId
+      );
+
+      console.log(assignment);
+
+      // If not found, log it and skip.
+      if (!assignment) {
+        console.log(
+          `No assignment with ID ${assignmentId} found in AssignmentGroup. Skipping.`
+        );
+        continue;
+      }
+    }
+
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
