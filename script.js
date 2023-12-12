@@ -186,8 +186,7 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
       const learnerData = result.find((learner) => learner.id === learnerId);
       learnerData[assignmentId] = weightedScore;
 
-      // Calculate final averages as you go
-      const numAssignments = Object.keys(learnerData).length - 2; // Subtracting 'id' and 'avg'
+      // Calculate final averages
       let totalFinalScore = 0;
       let totalPointsPossible = 0;
 
